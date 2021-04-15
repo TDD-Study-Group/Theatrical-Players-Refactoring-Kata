@@ -2,6 +2,8 @@
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.approvaltests.Approvals.verify
+import java.text.NumberFormat
+import java.util.*
 
 class StatementPrinterTests {
 
@@ -22,9 +24,9 @@ class StatementPrinterTests {
             )
         )
 
-        val statementPrinter = StatementPrinter { lineItem, invoice ->
+        val statementPrinter = StatementPrinter { lineItems, invoice ->
             printTextStatement(
-                lineItem,
+                lineItems,
                 invoice.customer,
                 NumberFormat.getCurrencyInstance(Locale.US)
             )
