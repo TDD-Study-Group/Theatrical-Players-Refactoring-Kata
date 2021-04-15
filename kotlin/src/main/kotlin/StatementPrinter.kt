@@ -5,12 +5,15 @@ import kotlin.math.max
 
 class StatementPrinter {
 
+    private val numberFormat: NumberFormat
+        get() {
+            return NumberFormat.getCurrencyInstance(Locale.US)
+        }
+
     fun print(invoice: Invoice, plays: Map<String, Play>): String {
         var totalAmount = 0
         var volumeCredits = 0
         var result = "Statement for ${invoice.customer}\n"
-
-        val frmt = NumberFormat.getCurrencyInstance(Locale.US)
 
         for ((playID, audience) in invoice.performances) {
             val play = plays[playID]
@@ -39,11 +42,11 @@ class StatementPrinter {
             if ("comedy" == play.type) volumeCredits += floor((audience / 5).toDouble()).toInt()
 
             // print line for this order
-            result += "  ${play.name}: ${frmt.format((thisAmount / 100).toLong())} ($audience seats)\n"
+            result += "  ${play.name}: ${numberFormat.format((thisAmount / 100).toLong())} ($audience seats)\n"
 
             totalAmount += thisAmount
         }
-        result += "Amount owed is ${frmt.format((totalAmount / 100).toLong())}\n"
+        result += "Amount owed is ${numberFormat.format((totalAmount / 100).toLong())}\n"
         result += "You earned $volumeCredits credits\n"
         return result
     }
