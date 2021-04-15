@@ -1,25 +1,16 @@
 import java.text.NumberFormat
-import java.util.*
 import kotlin.math.floor
 import kotlin.math.max
 
 data class LineItem(val name: String, val amount: Int, val audience: Int, val volumeCredits: Int)
 
-class StatementPrinter {
+class StatementPrinter(val printigStrat: (MutableList<LineItem>, Invoice) -> String) {
 
-    private val numberFormat: NumberFormat
-        get() {
-            return NumberFormat.getCurrencyInstance(Locale.US)
-        }
+    fun print(invoice: Invoice, plays: Map<String, Play>): String {
+        return printigStrat(calculateLineItems(invoice, plays), invoice)
+    }
 
-
-    fun print(invoice: Invoice, plays: Map<String, Play>): String =
-        printTextStatement(calculateLineItems(invoice, plays), invoice.customer)
-
-    private fun calculateLineItems(
-        invoice: Invoice,
-        plays: Map<String, Play>
-    ): MutableList<LineItem> {
+    private fun calculateLineItems(invoice: Invoice, plays: Map<String, Play>): MutableList<LineItem> {
         val lineItems = mutableListOf<LineItem>()
 
         for ((playID, audience) in invoice.performances) {
@@ -56,20 +47,17 @@ class StatementPrinter {
         return lineItems
     }
 
-    private fun printTextStatement(
-        lineItems: MutableList<LineItem>,
-        customer: String
-    ): String {
-        val totalAmount = lineItems.sumBy(LineItem::amount)
+}
 
-        var result = "Statement for $customer\n"
+private fun printTextStatement(lineItems: List<LineItem>, customer: String, numberFormat: NumberFormat): String {
+    val totalAmount = lineItems.sumBy(LineItem::amount)
 
-        lineItems.forEach { item -> result += "  ${item.name}: ${numberFormat.format((item.amount / 100).toLong())} (${item.audience} seats)\n" }
+    var result = "Statement for $customer\n"
 
-        result += "Amount owed is ${numberFormat.format((totalAmount / 100).toLong())}\n"
-        result += "You earned ${lineItems.sumBy(LineItem::volumeCredits)} credits\n"
+    lineItems.forEach { item -> result += "  ${item.name}: ${numberFormat.format((item.amount / 100).toLong())} (${item.audience} seats)\n" }
 
-        return result
-    }
+    result += "Amount owed is ${numberFormat.format((totalAmount / 100).toLong())}\n"
+    result += "You earned ${lineItems.sumBy(LineItem::volumeCredits)} credits\n"
 
+    return result
 }

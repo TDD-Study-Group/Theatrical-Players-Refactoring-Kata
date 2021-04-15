@@ -22,7 +22,13 @@ class StatementPrinterTests {
             )
         )
 
-        val statementPrinter = StatementPrinter()
+        val statementPrinter = StatementPrinter { lineItem, invoice ->
+            printTextStatement(
+                lineItem,
+                invoice.customer,
+                NumberFormat.getCurrencyInstance(Locale.US)
+            )
+        }
         val result = statementPrinter.print(invoice, plays)
 
         verify(result)
@@ -42,7 +48,13 @@ class StatementPrinterTests {
             )
         )
 
-        val statementPrinter = StatementPrinter()
+        val statementPrinter = StatementPrinter { lineItem, invoice ->
+            printTextStatement(
+                lineItem,
+                invoice.customer,
+                NumberFormat.getCurrencyInstance(Locale.US)
+            )
+        }
         assertThrows(Error::class.java) { statementPrinter.print(invoice, plays) }
     }
 }
