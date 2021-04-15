@@ -11,9 +11,9 @@ class StatementPrinterTests {
     internal fun exampleStatement() {
 
         val plays = mapOf(
-            "hamlet" to Play("Hamlet", "tragedy"),
-            "as-like" to Play("As You Like It", "comedy"),
-            "othello" to Play("Othello", "tragedy")
+            "hamlet" to play("Hamlet", "tragedy"),
+            "as-like" to play("As You Like It", "comedy"),
+            "othello" to play("Othello", "tragedy")
         )
 
         val invoice = Invoice(
@@ -39,8 +39,8 @@ class StatementPrinterTests {
     @Test
     internal fun statementWithNewPlayTypes() {
         val plays = mapOf(
-            "henry-v" to Play("Henry V", "history"),
-            "as-like" to Play("As You Like It", "pastoral")
+            "henry-v" to play("Henry V", "history"),
+            "as-like" to play("As You Like It", "pastoral")
         )
 
         val invoice = Invoice(
