@@ -14,9 +14,7 @@ class StatementPrinter {
     data class LineItem(val name: String, val amount: Int, val audience: Int)
 
     fun print(invoice: Invoice, plays: Map<String, Play>): String {
-        var totalAmount = 0
         var volumeCredits = 0
-        var result = "Statement for ${invoice.customer}\n"
         val lineItems = mutableListOf<LineItem>()
 
         for ((playID, audience) in invoice.performances) {
@@ -45,15 +43,26 @@ class StatementPrinter {
             // add extra credit for every ten comedy attendees
             if ("comedy" == play.type) volumeCredits += floor((audience / 5).toDouble()).toInt()
 
-            val item = LineItem(play.name, thisAmount, audience)
-            lineItems.add(item)
+            lineItems.add(LineItem(play.name, thisAmount, audience))
         }
 
-        totalAmount = lineItems.sumBy(LineItem::amount)
-        lineItems.forEach{ item -> result += "  ${item.name}: ${numberFormat.format((item.amount / 100).toLong())} (${item.audience} seats)\n" }
+        return printTextStatement(lineItems, invoice.customer, volumeCredits)
+    }
+
+    private fun printTextStatement(
+        lineItems: MutableList<LineItem>,
+        customer: String,
+        volumeCredits: Int
+    ): String {
+        val totalAmount = lineItems.sumBy(LineItem::amount)
+
+        var result = "Statement for $customer\n"
+
+        lineItems.forEach { item -> result += "  ${item.name}: ${numberFormat.format((item.amount / 100).toLong())} (${item.audience} seats)\n" }
 
         result += "Amount owed is ${numberFormat.format((totalAmount / 100).toLong())}\n"
         result += "You earned $volumeCredits credits\n"
+
         return result
     }
 
