@@ -10,10 +10,14 @@ class StatementPrinter {
             return NumberFormat.getCurrencyInstance(Locale.US)
         }
 
+
+    data class LineItem(val name: String, val amount: Int, val audience: Int)
+
     fun print(invoice: Invoice, plays: Map<String, Play>): String {
         var totalAmount = 0
         var volumeCredits = 0
         var result = "Statement for ${invoice.customer}\n"
+        val lineItems = mutableListOf<LineItem>()
 
         for ((playID, audience) in invoice.performances) {
             val play = plays[playID]
